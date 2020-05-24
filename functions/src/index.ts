@@ -65,7 +65,7 @@ app.post('/api/page', async (
 			typeof hash === 'string' &&
 			typeof url === 'string' &&
 			typeof expiration === 'number' &&
-			Buffer.isBuffer(data)
+			typeof data === 'object'
 		)) {
 			res.status(400).send('Invalid request body. Must include "secret" and "page".')
 			return
@@ -73,7 +73,7 @@ app.post('/api/page', async (
 		
 		await Promise.all([
 			firestore.doc(`pages/${secret}${hash}`).set({ url, expiration }),
-			storage.file(`pages/${secret}${hash}`).save(data)
+			storage.file(`pages/${secret}${hash}`).save(Buffer.from(data.data))
 		])
 		
 		res.send()

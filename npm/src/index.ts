@@ -5,7 +5,7 @@ import { DEFAULT_EXPIRATION_OFFSET } from './constants'
 import {
 	createInstance,
 	shouldRender,
-	urlToHash,
+	hashString,
 	dataResponseToPage,
 	dataFromUrl,
 	sendPage,
@@ -28,7 +28,7 @@ module.exports = (config: Config | string) => {
 	
 	const update = async (url: string) => {
 		const page: Page = {
-			hash: urlToHash(url),
+			hash: hashString(url),
 			url,
 			expiration: Date.now() + (expirationOffset ?? DEFAULT_EXPIRATION_OFFSET),
 			data: await dataFromUrl(url)
@@ -40,7 +40,7 @@ module.exports = (config: Config | string) => {
 	}
 	
 	const remove = async (url: string) => {
-		const hash = urlToHash(url)
+		const hash = hashString(url)
 		
 		await _remove(hash)
 		delete cache[hash]
@@ -58,7 +58,7 @@ module.exports = (config: Config | string) => {
 						pathname: req.originalUrl
 					})
 					
-					const hash = urlToHash(url)
+					const hash = hashString(url)
 					
 					if (hash in cache) {
 						await sendPage({
@@ -133,6 +133,6 @@ module.exports = (config: Config | string) => {
 module.exports.cache = cache
 module.exports.defaultExpirationOffset = DEFAULT_EXPIRATION_OFFSET
 
-module.exports.urlToHash = urlToHash
+module.exports.urlToHash = hashString
 module.exports.didExpire = didExpire
 module.exports.defaultConfig = defaultConfig

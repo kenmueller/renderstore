@@ -11,12 +11,11 @@ import { RENDERSTORE_USER_AGENT } from './constants'
 
 export let browser: puppeteer.Browser | null = null
 
-export const defaultConfig = (secret: string): Config => {
-	if (!secret)
+export const defaultConfig = (_secret: string): Config => {
+	if (!_secret)
 		throw new Error('RenderStore error: Your secret cannot be empty.')
 	
-	if (/\s|\/|\\|\./.test(secret))
-		throw new Error('RenderStore error: Your secret cannot have spaces, slashes, or periods.')
+	const secret = hashString(_secret)
 	
 	return {
 		get: async hash => {
@@ -69,7 +68,7 @@ export const shouldRender = (req: Request) => {
 	)
 }
 
-export const urlToHash = (data: string) =>
+export const hashString = (data: string) =>
 	createHash('md5').update(data).digest('hex')
 
 export const dataResponseToPage = async ({ hash, url, data }: {
